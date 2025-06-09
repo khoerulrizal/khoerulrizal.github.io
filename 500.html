@@ -1,0 +1,120 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><title>Khoerul Rizal - Front End Developer | React Native & Next.js Specialist</title><meta name="description" content="Meet Khoerul Rizal, a skilled Front End Developer with expertise in building dynamic web and mobile apps using React Native and Next.js. Explore my portfolio."><meta property="og:title" content="Khoerul Rizal | Front End Developer"><meta property="og:description" content="Building modern, responsive web and mobile applications with React Native and Next.js. Let's create something amazing together."><meta property="og:image" content="https://khoerulrizal.github.io/og-image.png"><meta property="og:url" content="https://khoerulrizal.github.io"><meta property="og:type" content="website"><meta property="og:site_name" content="Khoerul Rizal's Portfolio"><meta name="google-site-verification" content="PB-_IGWaGrtTXrTeVIW2Kc-T0gbCUTmw5RGgPKwFH38"><link rel="sitemap" href="/sitemap-index.xml"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Khoerul Rizal","url":"https://khoerulrizal.github.io/","jobTitle":"Front End Developer","description":"Passionate front-end developer experienced in building modern web and mobile applications using React Native and Next.js.","image":"https://khoerulrizal.github.io/khoerul-rizal.jpg","knowsAbout":["React Native","Next.js","JavaScript","TypeScript","Web Development","Mobile Development"],"sameAs":["https://linkedin.com/in/khoerul-rizal","https://github.com/khoerulrizal","https://instagram.com/rzl_trimelry/","https://x.com/KhoerulRzl","https://facebook.com/rizal.trimelty"]}</script><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.CtSceO8m.js"></script><script>(function(){const propHeight = "2px";
+const propAnimationDuration = 300;
+const propThreshold = 200;
+const propCustomClass = undefined;
+const baseIndicatorClasses = "bg-fuchsia-600 pointer-events-none fixed z-[10000] top-0 left-0 w-full origin-left rtl:origin-right transform";
+
+  (() => {
+    // Prevent multiple initializations if script runs multiple times (e.g., HMR)
+    if (document.querySelector('[data-astro-loading-indicator="true"]')) {
+      return;
+    }
+
+    let currentProgress = 0.25; // Initial "fake" progress percentage (0 to 1)
+    let trickleIntervalId = undefined;
+    let thresholdTimeoutId = undefined;
+
+    // Create the indicator element
+    const indicatorElement = document.createElement("div");
+    indicatorElement.setAttribute("data-astro-loading-indicator", "true"); // Mark our element
+    indicatorElement.className = `${baseIndicatorClasses} ${propCustomClass || ''}`.trim();
+    indicatorElement.setAttribute("aria-hidden", "true");
+
+    indicatorElement.style.setProperty('--indicator-height', propHeight);
+    indicatorElement.style.setProperty('--indicator-transform-duration', `${propAnimationDuration}ms`);
+    indicatorElement.style.setProperty('--indicator-opacity-duration', `${propAnimationDuration / 2}ms`);
+    indicatorElement.style.setProperty('--indicator-opacity-delay', `${propAnimationDuration / 2}ms`);
+    indicatorElement.style.setProperty('--progress', String(currentProgress)); // Initial progress
+
+    indicatorElement.style.height = 'var(--indicator-height)';
+    indicatorElement.style.transform = 'scaleX(var(--progress))';
+    indicatorElement.style.opacity = '0'; // Start hidden
+    indicatorElement.style.transition = `transform var(--indicator-transform-duration) ease-out, opacity var(--indicator-opacity-duration) var(--indicator-opacity-delay) ease-in`;
+
+    /** Updates the visual progress of the indicator. */
+    const updateProgress = (newProgress) => {
+      currentProgress = Math.max(0, Math.min(1, newProgress)); // Clamp between 0 and 1
+      indicatorElement.style.setProperty('--progress', String(currentProgress));
+    };
+
+    /** Updates the opacity of the indicator. */
+    const updateOpacity = (newOpacity) => {
+      indicatorElement.style.opacity = String(newOpacity);
+    };
+
+    /** Attaches the indicator element to the specified document's body. */
+    const attachToDom = (doc) => {
+      const existingIndicator = doc.querySelector('[data-astro-loading-indicator="true"]');
+      if (existingIndicator && existingIndicator !== indicatorElement) {
+        existingIndicator.remove(); // Clean up any old instance
+      }
+      if (doc.body && !doc.body.contains(indicatorElement)) {
+        doc.body.prepend(indicatorElement);
+      }
+    };
+
+    // Initial attachment to the DOM
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => attachToDom(document));
+    } else {
+      attachToDom(document);
+    }
+
+    // Handle Astro's View Transitions: Before new page content is prepared
+    document.addEventListener("astro:before-preparation", () => {
+      clearTimeout(thresholdTimeoutId);
+      clearInterval(trickleIntervalId);
+
+      updateProgress(0.25); // Reset progress to initial trickling start
+      updateOpacity(0);     // Ensure it's hidden before threshold
+
+      thresholdTimeoutId = setTimeout(() => {
+        updateOpacity(1); // Show indicator
+        trickleIntervalId = setInterval(() => {
+          if (currentProgress < 0.95) { // Trickle slowly, but don't max out from trickle alone
+            updateProgress(currentProgress + Math.random() * 0.03);
+          } else {
+            clearInterval(trickleIntervalId); // Stop trickling if very close to full
+          }
+        }, propAnimationDuration); // Trickle interval based on animation duration for responsiveness
+      }, propThreshold);
+    });
+
+    // Handle Astro's View Transitions: Before old page is swapped with new page
+    document.addEventListener("astro:before-swap", (event) => {
+      const { newDocument } = event;
+
+      clearTimeout(thresholdTimeoutId);
+      thresholdTimeoutId = undefined;
+      clearInterval(trickleIntervalId);
+      trickleIntervalId = undefined;
+
+      attachToDom(newDocument); // Crucial: move the indicator to the new document
+      updateProgress(1);      // Instantly complete progress
+
+      // Start fade out after a short delay (half of animation duration)
+      setTimeout(() => {
+        updateOpacity(0);
+      }, propAnimationDuration / 2);
+
+      // Reset progress for the next navigation after it's fully hidden
+      // Total time for opacity to become 0: delay + duration = (anim/2) + (anim/2) = anim
+      setTimeout(() => {
+        if (indicatorElement.style.opacity === '0') { // Ensure it's hidden before resetting progress
+            updateProgress(0.25);
+        }
+      }, propAnimationDuration + 50); // Wait a bit longer than full animation cycle
+    });
+
+    // Optional: Cleanup if user navigates away from the Astro site entirely
+    window.addEventListener('pagehide', () => {
+      if (indicatorElement && indicatorElement.parentNode) {
+        indicatorElement.remove();
+      }
+      clearTimeout(thresholdTimeoutId);
+      clearInterval(trickleIntervalId);
+      // The data-attribute will be gone with the element
+    });
+
+  })();
+})();</script><link rel="stylesheet" href="/_astro/index.CNMxaJxI.css"></head> <body>  <main>  <div class="h-full"> <img class="fixed inset-0 w-full h-full z-10 blur-[200px]" src="/_astro/background.BPKAcmfN.svg" alt="" fetchpriority="high"> <main class="h-full flex justify-center"> <section class="flex items-center">  <h1>Unknown error</h1>  </section> </main> </div>  </main> </body></html>

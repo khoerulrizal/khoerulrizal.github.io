@@ -1,0 +1,5 @@
+
+User-agent: *
+Allow: /
+
+Sitemap: https://khoerulrizal.github.io/sitemap-index.xml
